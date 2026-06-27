@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OCR — Notized</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #eeeae2;
+        --card: #f8f6f1;
+        --border: #d9d5cc;
+        --green: #3a6b4a;
+        --green-lt: #eaf2ec;
+        --green-dk: #2c5239;
+        --text: #1a1a1a;
+        --muted: #7a7670;
+        --danger: #c0392b;
+        --radius: 16px;
+        --shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* ── NAV ── */
+      nav {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 0 32px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Playfair Display", serif;
+        font-size: 20px;
+        color: var(--text);
+        text-decoration: none;
+      }
+      .nav-icon {
+        width: 34px;
+        height: 34px;
+        background: var(--green);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+      }
+      .nav-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .nav-link {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .nav-link:hover {
+        color: var(--text);
+      }
+      .nav-avatar {
+        width: 34px;
+        height: 34px;
+        background: var(--green);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: white;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      /* ── LAYOUT ── */
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 32px;
+        align-items: start;
+      }
+
+      /* ── BACK ── */
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 14px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-bottom: 24px;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .back-btn:hover {
+        color: var(--text);
+        border-color: #aaa;
+      }
+
+      /* ── MAIN CARD ── */
+      .main-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 36px;
+      }
+      .main-card h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 28px;
+        line-height: 1.2;
+      }
+
+      /* ── DROP ZONE ── */
+      .dropzone {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        background: #f2efe9;
+        padding: 48px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        position: relative;
+      }
+      .dropzone:hover,
+      .dropzone.drag-over {
+        border-color: var(--green);
+        background: var(--green-lt);
+      }
+      .dropzone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+      .dropzone-icon {
+        width: 52px;
+        height: 52px;
+        background: var(--border);
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 16px;
+        transition: background 0.2s;
+      }
+      .dropzone:hover .dropzone-icon {
+        background: #c8ddcc;
+      }
+      .dropzone-icon svg {
+        width: 26px;
+        height: 26px;
+        color: var(--green);
+      }
+      .dropzone p {
+        font-size: 15px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .dropzone span {
+        color: var(--green);
+        font-weight: 600;
+      }
+      .dropzone small {
+        font-size: 12px;
+        color: #aaa6a0;
+        display: block;
+        margin-top: 6px;
+      }
+
+      /* ── PREVIEW ── */
+      #preview-wrap {
+        display: none;
+        margin-top: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        position: relative;
+      }
+      #preview-img {
+        width: 100%;
+        max-height: 320px;
+        object-fit: contain;
+        background: #f0ede7;
+        display: block;
+      }
+      .preview-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .preview-remove:hover {
+        background: var(--danger);
+      }
+
+      /* ── FOOTER BAR ── */
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-hint {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* ── BUTTON ── */
+      .btn-analyze {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--text);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 12px 28px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+      .btn-analyze:hover {
+        background: #333;
+      }
+      .btn-analyze:active {
+        transform: scale(0.98);
+      }
+      .btn-analyze:disabled {
+        background: #999;
+        cursor: not-allowed;
+      }
+      .btn-analyze svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* ── SPINNER ── */
+      .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── RESULT ── */
+      #result-section {
+        display: none;
+        margin-top: 28px;
+        border-top: 1px solid var(--border);
+        padding-top: 24px;
+      }
+      .result-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--green);
+        margin-bottom: 10px;
+      }
+      #result-text {
+        width: 100%;
+        min-height: 140px;
+        background: #f2efe9;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        font-family: "Inter", sans-serif;
+        font-size: 15px;
+        color: var(--text);
+        line-height: 1.7;
+        resize: vertical;
+        outline: none;
+      }
+      #result-text:focus {
+        border-color: var(--green);
+      }
+
+      .result-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .btn-copy,
+      .btn-clear {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 18px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .btn-copy:hover {
+        background: var(--green-lt);
+        border-color: var(--green);
+        color: var(--green);
+      }
+      .btn-clear:hover {
+        background: #fff0ee;
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      /* ── ERROR ── */
+      .error-box {
+        display: none;
+        background: #fff0ee;
+        border: 1px solid #f5c6c2;
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 14px;
+        color: var(--danger);
+        margin-top: 16px;
+      }
+
+      /* ── SIDEBAR ── */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .sidebar-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .info-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .info-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--green);
+        margin-bottom: 8px;
+      }
+      .info-card p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .accuracy-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--green-lt);
+        border: 1px solid #b8d4bc;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--green-dk);
+        margin-top: 10px;
+      }
+      .accuracy-badge::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: var(--green);
+        border-radius: 50%;
+      }
+
+      /* ── TOAST ── */
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text);
+        color: white;
+        padding: 10px 22px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 500;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+        z-index: 999;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          grid-template-columns: 1fr;
+        }
+        .main-card {
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a class="nav-brand" href="#">
+        <div class="nav-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
+            <path d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
+        </div>
+        Notized
+      </a>
+      <div class="nav-right">
+        <a class="nav-link" href="#">Dashboard</a>
+        <div class="nav-avatar">J</div>
+      </div>
+    </nav>
+
+    <!-- PAGE -->
+    <div class="page">
+      <!-- MAIN -->
+      <div>
+        <div class="main-card">
+          <h1>Extract Text from Image</h1>
+
+          <!-- DROPZONE -->
+          <div class="dropzone" id="dropzone">
+            <input
+              type="file"
+              id="file-input"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+            />
+            <div class="dropzone-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+            </div>
+            <p>Drop your image here, or <span>browse files</span></p>
+            <small>PNG, JPG, JPEG, WEBP — max 10MB</small>
+          </div>
+
+          <!-- IMAGE PREVIEW -->
+          <div id="preview-wrap">
+            <img id="preview-img" alt="Preview" />
+            <button class="preview-remove" onclick="clearImage()">
+              ✕ Remove
+            </button>
+          </div>
+
+          <!-- ERROR -->
+          <div class="error-box" id="error-box"></div>
+
+          <!-- FOOTER -->
+          <div class="card-footer">
+            <span class="footer-hint"
+              >Works best with printed text or clear block letters</span
+            >
+            <button
+              class="btn-analyze"
+              id="btn-analyze"
+              onclick="runOCR()"
+              disabled
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                />
+              </svg>
+              <span id="btn-label">Scan Image</span>
+              <div class="spinner" id="spinner"></div>
+            </button>
+          </div>
+
+          <!-- RESULT -->
+          <div id="result-section">
+            <div class="result-label">Extracted Text</div>
+            <textarea id="result-text" readonly></textarea>
+            <div class="result-actions">
+              <button class="btn-copy" onclick="copyText()">Copy Text</button>
+              <button class="btn-clear" onclick="clearAll()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-title">Things to Know</div>
+
+        <div class="info-card">
+          <div class="info-card-title">Works Best With</div>
+          <p>
+            Printed text, handwritten block capitals, clear contrast between ink
+            and background.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Model Accuracy</div>
+          <p>CNN trained on 112,800 EMNIST samples.</p>
+          <div class="accuracy-badge">87.85% test accuracy</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Supported Characters</div>
+          <p>
+            Digits 0–9, uppercase A–Z, and a subset of lowercase letters (a, b,
+            d, e, f, g, h, n, q, r, t).
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Supported Formats</div>
+          <p>PNG, JPG, JPEG, WEBP. Max file size 10MB.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("file-input");
+      const previewWrap = document.getElementById("preview-wrap");
+      const previewImg = document.getElementById("preview-img");
+      const btnAnalyze = document.getElementById("btn-analyze");
+      const btnLabel = document.getElementById("btn-label");
+      const spinner = document.getElementById("spinner");
+      const resultSec = document.getElementById("result-section");
+      const resultText = document.getElementById("result-text");
+      const errorBox = document.getElementById("error-box");
+
+      let selectedFile = null;
+
+      // Drag & drop
+      dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("drag-over");
+      });
+      dropzone.addEventListener("dragleave", () =>
+        dropzone.classList.remove("drag-over"),
+      );
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("drag-over");
+        const f = e.dataTransfer.files[0];
+        if (f) handleFile(f);
+      });
+
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files[0]) handleFile(fileInput.files[0]);
+      });
+
+      function handleFile(file) {
+        if (!file.type.startsWith("image/"))
+          return showError("Please upload an image file.");
+        if (file.size > 10 * 1024 * 1024)
+          return showError("File too large. Max 10MB.");
+
+        selectedFile = file;
+        const url = URL.createObjectURL(file);
+        previewImg.src = url;
+        previewWrap.style.display = "block";
+        btnAnalyze.disabled = false;
+        hideError();
+        resultSec.style.display = "none";
+      }
+
+      function clearImage() {
+        selectedFile = null;
+        fileInput.value = "";
+        previewWrap.style.display = "none";
+        previewImg.src = "";
+        btnAnalyze.disabled = true;
+        resultSec.style.display = "none";
+        hideError();
+      }
+
+      function clearAll() {
+        clearImage();
+        resultText.value = "";
+      }
+
+      async function runOCR() {
+        if (!selectedFile) return;
+
+        // Loading state
+        btnLabel.textContent = "Scanning...";
+        spinner.style.display = "block";
+        btnAnalyze.disabled = true;
+        hideError();
+        resultSec.style.display = "none";
+
+        const formData = new FormData();
+        formData.append("image", selectedFile);
+
+        try {
+          const res = await fetch("ocr_api.php", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            resultText.value = data.text || "(No text detected)";
+            resultSec.style.display = "block";
+            resultText.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          } else {
+            showError(data.error || "OCR failed. Please try again.");
+          }
+        } catch (err) {
+          showError(
+            "Cannot connect to server. Make sure XAMPP and the Python environment are running.",
+          );
+        } finally {
+          btnLabel.textContent = "Scan Image";
+          spinner.style.display = "none";
+          btnAnalyze.disabled = false;
+        }
+      }
+
+      function copyText() {
+        navigator.clipboard
+          .writeText(resultText.value)
+          .then(() => showToast("Copied to clipboard"));
+      }
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = "block";
+      }
+      function hideError() {
+        errorBox.style.display = "none";
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2000);
+      }
+    </script>
+  </body>
+</html>
