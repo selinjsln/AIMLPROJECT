@@ -13,12 +13,12 @@ header('Access-Control-Allow-Origin: *');
 // $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 // // ────────────────────────────────────────────────────────────────────────────
 
-// // ─── KONFIGURASI — sesuaikan path di sini ───────────────────────────────────
-// $PYTHON_PATH = 'C:\\xampp\\htdocs\\AIMLPROJECT\\venv\\Scripts\\python.exe';
-// $OCR_ENGINE = 'C:\\xampp\\htdocs\\AIMLPROJECT\\ocr_engine.py';
-// $UPLOAD_DIR = 'C:\\xampp\\htdocs\\AIMLPROJECT\\uploads\\';
-// $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
-// // ────────────────────────────────────────────────────────────────────────────
+// ─── KONFIGURASI — sesuaikan path di sini ───────────────────────────────────
+$PYTHON_PATH = 'C:\\xampp\\htdocs\\AIMLPROJECT\\venv\\Scripts\\python.exe';
+$OCR_ENGINE = 'C:\\xampp\\htdocs\\AIMLPROJECT\\ocr_engine.py';
+$UPLOAD_DIR = 'C:\\xampp\\htdocs\\AIMLPROJECT\\uploads\\';
+$MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+// ────────────────────────────────────────────────────────────────────────────
 
 // Buat folder uploads kalau belum ada
 if (!is_dir($UPLOAD_DIR)) {
