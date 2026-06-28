@@ -3,7 +3,26 @@ import tensorflow as tf
 import numpy as np
 
 
-def load_emnist():
+def build_augmenter():
+    """
+    Augmentasi ringan khusus untuk training set.
+    Tujuannya: bikin model lebih toleran terhadap variasi tulisan tangan
+    asli (sedikit miring, sedikit geser, ukuran beda-beda), karena tulisan
+    tangan asli jarang identik dengan style huruf di EMNIST.
+    """
+    return tf.keras.Sequential(
+        [
+            tf.keras.layers.RandomRotation(0.04, fill_mode="constant", fill_value=0.0),
+            tf.keras.layers.RandomTranslation(
+                0.08, 0.08, fill_mode="constant", fill_value=0.0
+            ),
+            tf.keras.layers.RandomZoom(0.08, fill_mode="constant", fill_value=0.0),
+        ],
+        name="augmentation",
+    )
+
+
+def load_emnist(augment=True):
     # EMNIST 'balanced' subset: 47 kelas (0-9, A-Z, a-z subset)
     # Download otomatis lewat tensorflow_datasets
     import tensorflow_datasets as tfds
@@ -20,7 +39,23 @@ def load_emnist():
         image = tf.expand_dims(image, axis=-1)       # Tambah channel kembali → (28,28,1)
         return image, label
 
-    ds_train = ds_train.map(preprocess).batch(128).prefetch(tf.data.AUTOTUNE)
-    ds_test = ds_test.map(preprocess).batch(128).prefetch(tf.data.AUTOTUNE)
+    ds_train = ds_train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE)
+    ds_test = ds_test.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE)
+
+    # Batch dulu sebelum augmentasi -> augmentasi layer jalan vectorized per-batch (lebih cepat)
+    ds_train = ds_train.batch(128)
+    ds_test = ds_test.batch(128)
+
+    if augment:
+        augmenter = build_augmenter()
+
+        def apply_aug(images, labels):
+            images = augmenter(images, training=True)
+            return images, labels
+
+        ds_train = ds_train.map(apply_aug, num_parallel_calls=tf.data.AUTOTUNE)
+
+    ds_train = ds_train.prefetch(tf.data.AUTOTUNE)
+    ds_test = ds_test.prefetch(tf.data.AUTOTUNE)
 
     return ds_train, ds_test

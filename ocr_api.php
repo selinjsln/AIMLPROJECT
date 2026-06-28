@@ -6,10 +6,17 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+// // ─── KONFIGURASI — sesuaikan path di sini ───────────────────────────────────
+// $PYTHON_PATH = 'D:\\AIMLPROJECT\\venv\\Scripts\\python.exe';
+// $OCR_ENGINE = 'D:\\AIMLPROJECT\\ocr_engine.py';
+// $UPLOAD_DIR = 'D:\\AIMLPROJECT\\uploads\\';
+// $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+// // ────────────────────────────────────────────────────────────────────────────
+
 // ─── KONFIGURASI — sesuaikan path di sini ───────────────────────────────────
-$PYTHON_PATH = 'D:\\AIMLPROJECT\\venv\\Scripts\\python.exe';
-$OCR_ENGINE = 'D:\\AIMLPROJECT\\ocr_engine.py';
-$UPLOAD_DIR = 'D:\\AIMLPROJECT\\uploads\\';
+$PYTHON_PATH = 'C:\\xampp\\htdocs\\AIMLPROJECT\\venv\\Scripts\\python.exe';
+$OCR_ENGINE = 'C:\\xampp\\htdocs\\AIMLPROJECT\\ocr_engine.py';
+$UPLOAD_DIR = 'C:\\xampp\\htdocs\\AIMLPROJECT\\uploads\\';
 $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 // ────────────────────────────────────────────────────────────────────────────
 
