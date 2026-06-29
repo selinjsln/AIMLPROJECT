@@ -7,9 +7,13 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 // ─── KONFIGURASI — sesuaikan path di sini ───────────────────────────────────
-$PYTHON_PATH = 'D:\\AIMLPROJECT\\venv\\Scripts\\python.exe';
-$OCR_ENGINE = 'D:\\AIMLPROJECT\\ocr_engine.py';
-$UPLOAD_DIR = 'D:\\AIMLPROJECT\\uploads\\';
+// $PYTHON_PATH = 'D:\\AIMLPROJECT\\venv\\Scripts\\python.exe';
+// $OCR_ENGINE = 'D:\\AIMLPROJECT\\ocr_engine.py';
+// $UPLOAD_DIR = 'D:\\AIMLPROJECT\\uploads\\';
+$PYTHON_PATH = 'C:\\laragon\\www\\AIMLPROJECT\\venv\\Scripts\\python.exe';
+$OCR_ENGINE = 'C:\\laragon\\www\\AIMLPROJECT\\ocr_engine.py';
+$UPLOAD_DIR = 'C:\\laragon\\www\\AIMLPROJECT\\uploads\\';
+
 $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 // ────────────────────────────────────────────────────────────────────────────
 
