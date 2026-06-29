@@ -1,8 +1,6 @@
 # train.py
 import os
-
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,8 +11,8 @@ from model import build_cnn
 
 def train_and_evaluate():
     # --- Load Data ---
-    print("Loading EMNIST dataset...")
-    ds_train, ds_test = load_emnist()
+    print("Loading EMNIST dataset (dengan augmentasi)...")
+    ds_train, ds_test = load_emnist(augment=True)
 
     # --- Build Model ---
     model = build_cnn(num_classes=47)
@@ -24,11 +22,11 @@ def train_and_evaluate():
     print("\nMulai training...")
     history = model.fit(
         ds_train,
-        epochs=15,
+        epochs=25,
         validation_data=ds_test,
         callbacks=[
             tf.keras.callbacks.EarlyStopping(
-                monitor="val_accuracy", patience=3, restore_best_weights=True
+                monitor="val_accuracy", patience=4, restore_best_weights=True
             )
         ],
     )
@@ -39,7 +37,6 @@ def train_and_evaluate():
 
     # --- Plot Training Curve ---
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-
     axes[0].plot(history.history["accuracy"], label="Train Accuracy")
     axes[0].plot(history.history["val_accuracy"], label="Val Accuracy")
     axes[0].set_title("Accuracy per Epoch")
