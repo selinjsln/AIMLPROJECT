@@ -35,7 +35,6 @@ def fix_common_errors(text):
 
 
 def preprocess_image(image_path):
-    """Tingkatkan kualitas gambar sebelum segmentasi."""
     img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     if img is None:
         raise ValueError(f"Gambar tidak bisa dibaca: {image_path}")
@@ -55,12 +54,6 @@ def preprocess_image(image_path):
 
 
 def group_into_lines(characters):
-    """
-    Kelompokkan karakter ke baris berdasarkan posisi Y, BARU urutkan
-    tiap baris dari kiri ke kanan. Tanpa ini, teks multi-baris akan
-    terbaca kolom-per-kolom (kebaca campur antar baris) bukan
-    baris-per-baris.
-    """
     if not characters:
         return []
 
@@ -93,7 +86,6 @@ def group_into_lines(characters):
 
 
 def segment_characters(image_path):
-    """Segmentasi gambar menjadi potongan per karakter + deteksi baris & spasi."""
     img = preprocess_image(image_path)
 
     blurred = cv2.GaussianBlur(img, (3, 3), 0)
@@ -124,7 +116,6 @@ def segment_characters(image_path):
     if not characters:
         return []
 
-    # --- Kunci perbaikan: deteksi baris dulu sebelum urutkan per-X ---
     lines = group_into_lines(characters)
 
     result = []
@@ -150,12 +141,6 @@ def segment_characters(image_path):
 
 
 def preprocess_char(char_crop):
-    """
-    Jadikan crop persegi (jaga aspect ratio) + beri margin sebelum
-    resize ke 28x28. cv2.resize langsung tanpa ini akan men-stretch
-    huruf kurus (mis. 'I') jadi proporsi yang berbeda dari data
-    training EMNIST, dan ini sumber salah baca I/L, H/M, dll.
-    """
     h, w = char_crop.shape
     size = max(h, w)
 
@@ -176,7 +161,6 @@ def preprocess_char(char_crop):
 
 
 def predict_text(image_path):
-    """Pipeline utama: gambar → teks."""
     model = load_model()
     characters = segment_characters(image_path)
     if not characters:

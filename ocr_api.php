@@ -1,7 +1,4 @@
 <?php
-// ocr_api.php
-// Letakkan file ini di folder yang sama dengan ocr.html
-// Path ke Python venv dan ocr_engine.py — sesuaikan jika beda
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -12,11 +9,6 @@ header('Access-Control-Allow-Origin: *');
 // $UPLOAD_DIR = 'D:/xampp/htdocs/AIMLPROJECT/uploads/';
 // $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 // // ────────────────────────────────────────────────────────────────────────────
-
-// ─── KONFIGURASI — sesuaikan path di sini ───────────────────────────────────
-// $PYTHON_PATH = 'D:\\AIMLPROJECT\\venv\\Scripts\\python.exe';
-// $OCR_ENGINE = 'D:\\AIMLPROJECT\\ocr_engine.py';
-// $UPLOAD_DIR = 'D:\\AIMLPROJECT\\uploads\\';
 $PYTHON_PATH = 'C:\\laragon\\www\\AIMLPROJECT\\venv\\Scripts\\python.exe';
 $OCR_ENGINE = 'C:\\laragon\\www\\AIMLPROJECT\\ocr_engine.py';
 $UPLOAD_DIR = 'C:\\laragon\\www\\AIMLPROJECT\\uploads\\';
@@ -24,7 +16,6 @@ $UPLOAD_DIR = 'C:\\laragon\\www\\AIMLPROJECT\\uploads\\';
 $MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 // ────────────────────────────────────────────────────────────────────────────
 
-// Buat folder uploads kalau belum ada
 if (!is_dir($UPLOAD_DIR)) {
     mkdir($UPLOAD_DIR, 0755, true);
 }
@@ -35,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Cek file ada
 if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
     echo json_encode(['success' => false, 'error' => 'No image uploaded']);
     exit;
@@ -60,7 +50,6 @@ if (!in_array($mime, $allowed_types)) {
     exit;
 }
 
-// Simpan file sementara dengan nama unik
 $ext       = pathinfo($file['name'], PATHINFO_EXTENSION);
 $filename  = uniqid('ocr_', true) . '.' . $ext;
 $filepath  = $UPLOAD_DIR . $filename;
@@ -70,11 +59,9 @@ if (!move_uploaded_file($file['tmp_name'], $filepath)) {
     exit;
 }
 
-// Jalankan ocr_engine.py
 $command = escapeshellcmd('"' . $PYTHON_PATH . '" "' . $OCR_ENGINE . '" "' . $filepath . '"');
 $output  = shell_exec($command . ' 2>&1');
 
-// Hapus file temporary setelah diproses
 @unlink($filepath);
 
 // Bersihkan output (hapus warning TensorFlow)
@@ -82,7 +69,6 @@ $lines = explode("\n", trim($output));
 $clean_lines = array_filter($lines, function($line) {
     $line = trim($line);
     if (empty($line)) return false;
-    // Buang semua baris warning/info dari TensorFlow dan sistem
     if (strpos($line, 'WARNING') !== false) return false;
     if (strpos($line, 'I0000') !== false) return false;
     if (strpos($line, 'W0000') !== false) return false;

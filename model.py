@@ -4,10 +4,6 @@ from tensorflow.keras import layers, models
 
 
 def build_cnn(num_classes=47):
-    """
-    CNN sederhana — 2 blok Conv+Pool, lalu Dense layer.
-    Cukup untuk dijelaskan ke dosen, hasilnya ~90%+ accuracy.
-    """
     model = models.Sequential(
         [
             # Input: gambar 28x28 grayscale

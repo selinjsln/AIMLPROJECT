@@ -2,9 +2,7 @@ import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 import numpy as np
 
-# ============================================================
 # 1. LOAD DATASET
-# ============================================================
 (ds_train, ds_test), ds_info = tfds.load(
     "emnist/balanced",
     split=["train", "test"],
@@ -12,9 +10,7 @@ import numpy as np
     with_info=True,  # <-- ini biar kita bisa lihat info dataset
 )
 
-# ============================================================
 # 2. INFO DASAR DATASET
-# ============================================================
 print("=== INFO DATASET ===")
 print(ds_info)
 
@@ -29,21 +25,17 @@ print(f"\nContoh label mapping:")
 for i in range(10):
     print(f"  index {i} → '{label_names[i]}'")
 
-# ============================================================
 # 3. LIHAT BENTUK 1 SAMPEL
-# ============================================================
 for image, label in ds_train.take(1):
     print(f"\n=== BENTUK SATU SAMPEL ===")
-    print(f"Shape image : {image.shape}")  # harusnya (28, 28, 1)
+    print(f"Shape image : {image.shape}")  # harusnya (28, 28, 1) = ukuran gambar 28×28 piksel
     print(f"Dtype image : {image.dtype}")  # uint8
     print(f"Label index : {label.numpy()}")
     print(f"Label char  : '{label_names[label.numpy()]}'")
     print(f"Pixel min   : {image.numpy().min()}")
     print(f"Pixel max   : {image.numpy().max()}")
 
-# ============================================================
 # 4. VISUALISASI 25 SAMPEL PERTAMA
-# ============================================================
 fig, axes = plt.subplots(5, 5, figsize=(10, 10))
 fig.suptitle("25 Sampel Pertama EMNIST Balanced", fontsize=14)
 
@@ -64,9 +56,7 @@ plt.savefig("sample_preview.png")
 plt.show()
 print("\nGambar tersimpan: sample_preview.png")
 
-# ============================================================
 # 5. DISTRIBUSI KELAS (apakah data seimbang?)
-# ============================================================
 print("\n=== DISTRIBUSI KELAS ===")
 label_counts = np.zeros(47, dtype=int)
 

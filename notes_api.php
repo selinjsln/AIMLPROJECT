@@ -1,14 +1,4 @@
 <?php
-/**
- * notes_api.php
- *
- * Backend sederhana untuk simpan/lihat/hapus note hasil OCR.
- * Disimpan sebagai file JSON (notes_data.json) di folder yang sama --
- * tidak butuh database, cukup PHP + akses tulis ke folder ini (XAMPP default
- * sudah bisa). Kalau nanti mau pindah ke MySQL, cukup ganti isi fungsi
- * read_notes() / write_notes() di bawah, struktur request/response-nya
- * (JSON dengan field "success") tidak perlu diubah di sisi frontend.
- */
 
 header("Content-Type: application/json");
 

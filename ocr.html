@@ -771,7 +771,6 @@
       </div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
     <script>
@@ -946,8 +945,7 @@
           const data = await res.json();
           if (data.success) renderNotes(data.notes || []);
         } catch (err) {
-          // Silent fail — sidebar simply stays empty/unchanged if the
-          // backend isn't reachable yet (e.g. notes_api.php not deployed).
+          // sidebar stays empty if backend isn't reachable yet (e.g. notes_api.php not deployed).
         }
       }
 

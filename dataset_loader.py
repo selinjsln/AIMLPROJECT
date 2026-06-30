@@ -4,12 +4,6 @@ import numpy as np
 
 
 def build_augmenter():
-    """
-    Augmentasi ringan khusus untuk training set.
-    Tujuannya: bikin model lebih toleran terhadap variasi tulisan tangan
-    asli (sedikit miring, sedikit geser, ukuran beda-beda), karena tulisan
-    tangan asli jarang identik dengan style huruf di EMNIST.
-    """
     return tf.keras.Sequential(
         [
             tf.keras.layers.RandomRotation(0.04, fill_mode="constant", fill_value=0.0),
@@ -42,7 +36,7 @@ def load_emnist(augment=True):
     ds_train = ds_train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE)
     ds_test = ds_test.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE)
 
-    # Batch dulu sebelum augmentasi -> augmentasi layer jalan vectorized per-batch (lebih cepat)
+    # dibagi jd batch berisi 128 gambar sebelum augmentasi (lebih cepat)
     ds_train = ds_train.batch(128)
     ds_test = ds_test.batch(128)
 
