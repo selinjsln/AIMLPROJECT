@@ -8,11 +8,9 @@ import sys
 
 EMNIST_LABELS = list("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabdefghnqrt")
 
-
 def load_model():
     model_path = os.path.join(os.path.dirname(__file__), "ocr_model.keras")
     return tf.keras.models.load_model(model_path)
-
 
 def fix_common_errors(text):
     """Post-processing: perbaiki kesalahan umum model."""
@@ -33,7 +31,6 @@ def fix_common_errors(text):
             result += char
     return result
 
-
 def preprocess_image(image_path):
     img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     if img is None:
@@ -51,7 +48,6 @@ def preprocess_image(image_path):
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
     img = cv2.filter2D(img, -1, kernel)
     return img
-
 
 def group_into_lines(characters):
     if not characters:
@@ -83,7 +79,6 @@ def group_into_lines(characters):
         line.sort(key=lambda c: c["x"])
 
     return lines
-
 
 def segment_characters(image_path):
     img = preprocess_image(image_path)
@@ -139,7 +134,6 @@ def segment_characters(image_path):
 
     return result
 
-
 def preprocess_char(char_crop):
     h, w = char_crop.shape
     size = max(h, w)
@@ -159,7 +153,6 @@ def preprocess_char(char_crop):
     normalized = resized.astype(np.float32) / 255.0
     return normalized.reshape(1, 28, 28, 1)
 
-
 def predict_text(image_path):
     model = load_model()
     characters = segment_characters(image_path)
@@ -178,7 +171,6 @@ def predict_text(image_path):
         if confidence > 0.4:
             result += EMNIST_LABELS[char_idx]
     return fix_common_errors(" ".join(result.split()))
-
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

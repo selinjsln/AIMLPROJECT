@@ -43,7 +43,7 @@ function respond_success(array $payload): void {
 
 $method = $_SERVER["REQUEST_METHOD"];
 
-// ── GET ?action=list ────────────────────────────────────────────────
+// GET
 if ($method === "GET") {
     $action = $_GET["action"] ?? "list";
     if ($action !== "list") {
@@ -55,7 +55,7 @@ if ($method === "GET") {
     respond_success(["notes" => $notes]);
 }
 
-// ── POST action=save | delete ───────────────────────────────────────
+// POST & DELETE
 if ($method === "POST") {
     $body = json_decode(file_get_contents("php://input"), true);
     if (!is_array($body)) {

@@ -51,7 +51,6 @@
           transition-duration: 0.001ms !important;
         }
       }
-      /* ── NAV ── */
       nav {
         background: var(--card);
         border-bottom: 1px solid var(--border);
@@ -89,7 +88,6 @@
         width: 18px;
         height: 18px;
       }
-      /* ── LAYOUT ── */
       .page {
         max-width: 1100px;
         margin: 0 auto;
@@ -99,7 +97,6 @@
         gap: 32px;
         align-items: start;
       }
-      /* ── MAIN CARD ── */
       .main-card {
         background: var(--card);
         border-radius: var(--radius);
@@ -119,7 +116,6 @@
         color: var(--muted);
         margin-bottom: 28px;
       }
-      /* ── DROP ZONE ── */
       .dropzone {
         border: 2px dashed var(--border);
         border-radius: 12px;
@@ -209,7 +205,6 @@
       .preview-remove:hover {
         background: var(--danger);
       }
-      /* ── FOOTER BAR ── */
       .card-footer {
         display: flex;
         align-items: center;
@@ -222,7 +217,6 @@
         font-size: 12px;
         color: var(--muted);
       }
-      /* ── BUTTONS ── */
       .btn-analyze {
         display: inline-flex;
         align-items: center;
@@ -267,7 +261,6 @@
           transform: rotate(360deg);
         }
       }
-      /* ── RESULT / NOTE EDITOR ── */
       #result-section {
         display: none;
         margin-top: 28px;
@@ -411,7 +404,6 @@
         color: var(--muted);
         align-self: center;
       }
-      /* ── ERROR ── */
       .error-box {
         display: none;
         background: #fff0ee;
@@ -422,7 +414,6 @@
         color: var(--danger);
         margin-top: 16px;
       }
-      /* ── SIDEBAR ── */
       .sidebar {
         display: flex;
         flex-direction: column;
@@ -489,7 +480,6 @@
         background: var(--green);
         border-radius: 50%;
       }
-      /* ── NOTES LIST ── */
       #notes-list {
         display: flex;
         flex-direction: column;
@@ -556,7 +546,6 @@
         border-radius: 12px;
         line-height: 1.5;
       }
-      /* ── TOAST ── */
       .toast {
         position: fixed;
         bottom: 28px;
@@ -590,7 +579,6 @@
     </style>
   </head>
   <body>
-    <!-- NAV -->
     <nav>
       <div class="nav-inner">
         <a class="nav-brand" href="#">
@@ -609,9 +597,8 @@
         </a>
       </div>
     </nav>
-    <!-- PAGE -->
+
     <div class="page">
-      <!-- MAIN -->
       <div>
         <div class="main-card">
           <h1>Extract Text from Image</h1>
@@ -620,7 +607,6 @@
             before saving.
           </p>
 
-          <!-- DROPZONE -->
           <div class="dropzone" id="dropzone">
             <input
               type="file"
@@ -644,7 +630,6 @@
             <small>PNG, JPG, JPEG, WEBP — max 10MB</small>
           </div>
 
-          <!-- IMAGE PREVIEW -->
           <div id="preview-wrap">
             <img id="preview-img" alt="Preview" />
             <button class="preview-remove" onclick="clearImage()">
@@ -652,10 +637,8 @@
             </button>
           </div>
 
-          <!-- ERROR -->
           <div class="error-box" id="error-box"></div>
 
-          <!-- FOOTER -->
           <div class="card-footer">
             <span class="footer-hint"
               >Works best with printed text or clear block letters</span
@@ -682,7 +665,6 @@
             </button>
           </div>
 
-          <!-- RESULT / NOTE EDITOR -->
           <div id="result-section">
             <div class="edit-hint">
               <svg
@@ -736,7 +718,6 @@
         </div>
       </div>
 
-      <!-- SIDEBAR -->
       <div class="sidebar">
         <div class="sidebar-title">
           <span>Saved Notes</span>
@@ -796,7 +777,6 @@
       let selectedFile = null;
       let currentNoteId = null; // null = new note, set once saved (lets re-save update it)
 
-      // ── Drag & drop ──────────────────────────────────────────────
       dropzone.addEventListener("dragover", (e) => {
         e.preventDefault();
         dropzone.classList.add("drag-over");
@@ -846,7 +826,7 @@
         updateCharCount();
       }
 
-      // ── OCR ──────────────────────────────────────────────────────
+      // OCR
       async function runOCR() {
         if (!selectedFile) return;
         btnLabel.textContent = "Scanning...";
@@ -899,7 +879,7 @@
       }
       resultText.addEventListener("input", updateCharCount);
 
-      // ── Notes (save / list / delete) ────────────────────────────
+      // Notes (save/list/delete)
       async function saveNote() {
         const text = resultText.value.trim();
         if (!text) {
@@ -1024,7 +1004,6 @@
         return div.innerHTML;
       }
 
-      // ── Misc ─────────────────────────────────────────────────────
       function copyText() {
         navigator.clipboard
           .writeText(resultText.value)
